@@ -1,0 +1,60 @@
+{
+  "name": "qrcodegen",
+  "version": "1.1.2",
+  "description": "A portable QR code generator with center image, icon focus, and inscription controls.",
+  "author": "Shu-Yen Wan",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "electron": "electron .",
+    "dist": "npm run build && electron-builder",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:win": "npm run build && electron-builder --win",
+    "package:chrome": "npm run build && node scripts/package-chrome.mjs",
+    "cap:sync": "npm run build && npx cap sync",
+    "android:open": "npx cap open android",
+    "ios:open": "npx cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.4.0",
+    "@capacitor/core": "^8.4.0",
+    "@capacitor/ios": "^8.4.0",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.4.0",
+    "electron": "^42.3.2",
+    "electron-builder": "^26.8.1",
+    "vite": "^8.0.16"
+  },
+  "build": {
+    "appId": "com.shuyenwan.qrstudio",
+    "productName": "QR Studio",
+    "copyright": "Copyright (c) 2026 Shu-Yen Wan",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "dmg",
+        "zip"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    }
+  }
+}

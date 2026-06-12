@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">QR Studio</string>
+    <string name="developer_name">Shu-Yen Wan</string>
+    <string name="copyright">Copyright (c) 2026 Shu-Yen Wan. Version 1.1.2</string>
+    <string name="title_activity_main">QR Studio</string>
+    <string name="package_name">com.qrstudio.app</string>
+    <string name="custom_url_scheme">com.qrstudio.app</string>
+</resources>

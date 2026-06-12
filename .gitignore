@@ -1,0 +1,27 @@
+.DS_Store
+
+# Dependencies
+node_modules/
+
+# Build outputs and packaged installers
+dist/
+release/
+chrome-extension/app/
+chrome-extension/dist/
+chrome-extension/*.zip
+
+# Native build caches
+.gradle-cache/
+android/.gradle/
+android/.gradle-cache/
+android/build/
+android/app/build/
+ios/App/App/public/
+ios/App/build/
+
+# Local logs and editor state
+*.log
+.env
+.env.*
+.idea/
+.vscode/

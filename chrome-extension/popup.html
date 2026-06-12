@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Studio</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup-shell">
+      <div class="brand-row">
+        <img src="icons/icon-48.png" alt="" class="brand-icon" />
+        <div>
+          <h1>QR Studio</h1>
+          <p>Generate polished QR codes with icons and inscriptions.</p>
+        </div>
+      </div>
+      <button id="open-app" type="button">Open QR Studio</button>
+      <section class="update-notice" id="update-notice" hidden>
+        <strong>Update available</strong>
+        <p>QR Studio <span id="update-version"></span> is ready. Upgrade now to use the latest extension build.</p>
+        <div class="update-actions">
+          <button class="secondary-button" id="ignore-update" type="button">Ignore</button>
+          <button id="apply-update" type="button">Upgrade</button>
+        </div>
+      </section>
+      <p class="credit">Copyright (c) 2026 Shu-Yen Wan · Version <span id="extension-version"></span></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
