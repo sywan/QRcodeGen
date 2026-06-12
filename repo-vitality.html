@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QR Studio Repo Vitality</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f3ea;
+        --surface: #fffdf7;
+        --ink: #172018;
+        --muted: #667064;
+        --line: #d8d0bf;
+        --teal: #0f766e;
+        --teal-dark: #0b4f49;
+        --gold: #d99a21;
+        --red: #b84232;
+        --blue: #2563eb;
+        --shadow: 0 18px 44px rgba(26, 31, 27, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at 12% 18%, rgba(15, 118, 110, 0.14), transparent 28%),
+          radial-gradient(circle at 88% 10%, rgba(217, 154, 33, 0.16), transparent 24%),
+          var(--bg);
+        color: var(--ink);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      a {
+        color: var(--teal-dark);
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 24px;
+        align-items: end;
+        padding: 28px 0 22px;
+      }
+
+      .kicker {
+        margin: 0 0 8px;
+        color: var(--teal-dark);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 740px;
+        margin: 0;
+        font-size: clamp(34px, 6vw, 72px);
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .intro {
+        max-width: 700px;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.55;
+      }
+
+      .badge {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 253, 247, 0.72);
+        padding: 12px 14px;
+        box-shadow: var(--shadow);
+        text-align: right;
+      }
+
+      .badge strong {
+        display: block;
+        font-size: 24px;
+      }
+
+      .badge span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .tabs {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 253, 247, 0.86);
+        padding: 8px;
+        backdrop-filter: blur(14px);
+      }
+
+      .tab {
+        flex: 0 0 auto;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--muted);
+        padding: 10px 12px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .tab[aria-selected="true"] {
+        background: var(--teal);
+        color: white;
+      }
+
+      main {
+        margin-top: 22px;
+      }
+
+      .panel {
+        display: none;
+        animation: rise 220ms ease-out;
+      }
+
+      .panel.active {
+        display: block;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 16px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 253, 247, 0.86);
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+
+      .span-4 {
+        grid-column: span 4;
+      }
+
+      .span-6 {
+        grid-column: span 6;
+      }
+
+      .span-8 {
+        grid-column: span 8;
+      }
+
+      .span-12 {
+        grid-column: span 12;
+      }
+
+      h2,
+      h3 {
+        margin: 0 0 12px;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        font-size: 28px;
+      }
+
+      h3 {
+        font-size: 17px;
+      }
+
+      p {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .metric {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+        margin-top: 12px;
+      }
+
+      .metric strong {
+        font-size: 30px;
+      }
+
+      .metric span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(120px, 1fr));
+        gap: 10px;
+        align-items: stretch;
+      }
+
+      .stage {
+        position: relative;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        min-height: 116px;
+        padding: 14px;
+      }
+
+      .stage::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: -12px;
+        width: 14px;
+        height: 2px;
+        background: var(--teal);
+      }
+
+      .stage:last-child::after {
+        display: none;
+      }
+
+      .stage small {
+        display: block;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+
+      .repo-tree {
+        display: grid;
+        gap: 8px;
+      }
+
+      .tree-row {
+        display: grid;
+        grid-template-columns: 190px 1fr;
+        gap: 12px;
+        align-items: start;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 12px;
+      }
+
+      .tree-row code,
+      code {
+        border-radius: 5px;
+        background: #1720180d;
+        padding: 2px 5px;
+        color: #1c2a20;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 0.92em;
+      }
+
+      .pill-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .pill {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #ffffffa6;
+        padding: 7px 10px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .command {
+        display: grid;
+        gap: 8px;
+      }
+
+      .command button {
+        justify-self: start;
+        border: 0;
+        border-radius: 6px;
+        background: var(--teal);
+        color: white;
+        padding: 9px 12px;
+        font-weight: 800;
+      }
+
+      pre {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #172018;
+        color: #fffaf0;
+        padding: 14px;
+        line-height: 1.45;
+      }
+
+      .target {
+        display: grid;
+        gap: 10px;
+      }
+
+      .target-card {
+        display: grid;
+        grid-template-columns: 140px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 12px;
+      }
+
+      .status {
+        border-radius: 999px;
+        padding: 7px 10px;
+        color: white;
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      .ready {
+        background: var(--teal);
+      }
+
+      .scaffold {
+        background: var(--gold);
+      }
+
+      .caution {
+        background: var(--red);
+      }
+
+      .qr-demo {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        width: min(100%, 300px);
+        aspect-ratio: 1;
+        margin: 8px auto 0;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fffaf0;
+      }
+
+      .dot {
+        border-radius: 3px;
+        background: #111827;
+      }
+
+      .dot.accent {
+        background: var(--teal);
+      }
+
+      .dot.gold {
+        background: var(--gold);
+      }
+
+      .dot.empty {
+        background: transparent;
+      }
+
+      .safe-zone {
+        grid-column: 3 / span 3;
+        grid-row: 3 / span 3;
+        display: grid;
+        place-items: center;
+        border: 2px dashed var(--teal);
+        border-radius: 8px;
+        background: #fffdf7;
+        color: var(--teal-dark);
+        font-size: 12px;
+        font-weight: 900;
+        text-align: center;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 10px;
+      }
+
+      .check {
+        display: flex;
+        gap: 10px;
+        align-items: start;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        padding: 12px;
+      }
+
+      .check input {
+        margin-top: 4px;
+        accent-color: var(--teal);
+      }
+
+      footer {
+        border-top: 1px solid var(--line);
+        margin-top: 32px;
+        padding-top: 18px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 860px) {
+        header,
+        .grid,
+        .pipeline,
+        .target-card,
+        .tree-row {
+          grid-template-columns: 1fr;
+        }
+
+        .span-4,
+        .span-6,
+        .span-8,
+        .span-12 {
+          grid-column: span 1;
+        }
+
+        .badge {
+          text-align: left;
+        }
+
+        .stage::after {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <div>
+          <p class="kicker">Developer Guide Visual Companion</p>
+          <h1>QR Studio Repo Vitality</h1>
+          <p class="intro">
+            A living map of the recovered QR Studio repository: what ships, what builds, where each folder belongs, and how the deployment paths connect.
+          </p>
+        </div>
+        <div class="badge">
+          <strong>1.1.2</strong>
+          <span>Shu-Yen Wan</span>
+        </div>
+      </header>
+
+      <nav class="tabs" aria-label="Guide sections">
+        <button class="tab" aria-selected="true" data-panel="overview">Overview</button>
+        <button class="tab" aria-selected="false" data-panel="architecture">Architecture</button>
+        <button class="tab" aria-selected="false" data-panel="commands">Commands</button>
+        <button class="tab" aria-selected="false" data-panel="targets">Deploy</button>
+        <button class="tab" aria-selected="false" data-panel="release">Release</button>
+        <button class="tab" aria-selected="false" data-panel="recovery">Recovery</button>
+      </nav>
+
+      <main>
+        <section class="panel active" id="overview">
+          <div class="grid">
+            <article class="card span-8">
+              <h2>What This Repo Does</h2>
+              <p>
+                QR Studio builds a local-first QR code design tool with branded center images, safe area controls, inscription layout, QR style variants, color themes, and PNG export.
+              </p>
+              <div class="pill-list">
+                <span class="pill">Web app</span>
+                <span class="pill">Chrome Extension</span>
+                <span class="pill">Electron desktop</span>
+                <span class="pill">Capacitor mobile scaffold</span>
+                <span class="pill">Chrome Web Store assets</span>
+              </div>
+              <div class="metric">
+                <span>Primary source status</span>
+                <strong>Recovered</strong>
+              </div>
+            </article>
+
+            <article class="card span-4">
+              <h3>QR Capability Snapshot</h3>
+              <div class="qr-demo" aria-label="Decorative QR Studio capability diagram">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot empty"></span><span class="dot accent"></span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot empty"></span><span class="dot"></span><span class="dot gold"></span><span class="dot empty"></span><span class="dot"></span><span class="dot empty"></span>
+                <span class="dot accent"></span><span class="dot"></span><span class="safe-zone">SAFE<br />CENTER</span><span class="dot"></span><span class="dot"></span>
+                <span class="dot"></span><span class="dot empty"></span><span class="dot"></span><span class="dot accent"></span>
+                <span class="dot"></span><span class="dot gold"></span><span class="dot empty"></span><span class="dot"></span>
+              </div>
+            </article>
+
+            <article class="card span-12">
+              <h3>Build Pipeline</h3>
+              <div class="pipeline">
+                <div class="stage"><strong>Author</strong><small>`src/`, `index.html`, extension files</small></div>
+                <div class="stage"><strong>Build</strong><small>`npm run build` creates `dist/`</small></div>
+                <div class="stage"><strong>Package</strong><small>Chrome, Electron, Capacitor</small></div>
+                <div class="stage"><strong>Verify</strong><small>Browser, extension, desktop, mobile</small></div>
+                <div class="stage"><strong>Ship</strong><small>Static host, Web Store, installers</small></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" id="architecture">
+          <div class="grid">
+            <article class="card span-12">
+              <h2>Repository Map</h2>
+              <div class="repo-tree">
+                <div class="tree-row"><code>src/</code><span>Recovered application bundle and styling used by Vite.</span></div>
+                <div class="tree-row"><code>chrome-extension/</code><span>Manifest V3 extension popup, background update notice logic, icons, and packaged web app copy.</span></div>
+                <div class="tree-row"><code>chrome-web-store/</code><span>Store listing text and publication graphics.</span></div>
+                <div class="tree-row"><code>electron/</code><span>Desktop wrapper that loads the built web app through a private `qrstudio://` protocol.</span></div>
+                <div class="tree-row"><code>android/</code><span>Capacitor Android scaffold. Generated build folders are intentionally ignored.</span></div>
+                <div class="tree-row"><code>scripts/</code><span>Packaging automation, currently including the Chrome Extension zip builder.</span></div>
+                <div class="tree-row"><code>test-assets/</code><span>Local test fixtures such as sample logos.</span></div>
+                <div class="tree-row"><code>dist/</code><span>Generated web output. Rebuild rather than edit directly.</span></div>
+                <div class="tree-row"><code>release/</code><span>Generated installer/package output. Review before publishing.</span></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" id="commands">
+          <div class="grid">
+            <article class="card span-6 command">
+              <h2>Daily Development</h2>
+              <pre><code>npm install
+npm run dev
+npm run build
+npm run preview</code></pre>
+              <button data-copy="npm install&#10;npm run dev&#10;npm run build&#10;npm run preview">Copy Commands</button>
+            </article>
+            <article class="card span-6 command">
+              <h2>Packaging</h2>
+              <pre><code>npm run package:chrome
+npm run dist:mac
+npm run dist:win
+npm run cap:sync</code></pre>
+              <button data-copy="npm run package:chrome&#10;npm run dist:mac&#10;npm run dist:win&#10;npm run cap:sync">Copy Commands</button>
+            </article>
+            <article class="card span-12">
+              <h3>Command Notes</h3>
+              <p>
+                `npm run build` is the central command. Chrome, Electron, and Capacitor packaging all depend on the web build being fresh.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" id="targets">
+          <div class="grid">
+            <article class="card span-12">
+              <h2>Deployment Targets</h2>
+              <div class="target">
+                <div class="target-card">
+                  <strong>Web</strong>
+                  <span>Deploy `dist/` to any static host or serve locally with Vite preview.</span>
+                  <span class="status ready">Ready</span>
+                </div>
+                <div class="target-card">
+                  <strong>Chrome</strong>
+                  <span>Upload `release/QR Studio Chrome Extension 1.1.2.zip` to Chrome Web Store.</span>
+                  <span class="status ready">Ready</span>
+                </div>
+                <div class="target-card">
+                  <strong>macOS</strong>
+                  <span>Electron uses `electron/main.cjs`; generated artifacts live in `release/`.</span>
+                  <span class="status ready">Ready</span>
+                </div>
+                <div class="target-card">
+                  <strong>Windows</strong>
+                  <span>Electron can generate installers, but current Windows artifacts were intentionally cleaned.</span>
+                  <span class="status caution">Cleaned</span>
+                </div>
+                <div class="target-card">
+                  <strong>Android/iOS</strong>
+                  <span>Capacitor projects are scaffolded; native store builds require Android Studio or Xcode.</span>
+                  <span class="status scaffold">Scaffold</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" id="release">
+          <div class="grid">
+            <article class="card span-6">
+              <h2>Version Sync</h2>
+              <p>Keep version values aligned across app metadata, extension manifest, store listing, and release package names.</p>
+              <div class="pill-list">
+                <span class="pill">package.json</span>
+                <span class="pill">manifest.json</span>
+                <span class="pill">copyright text</span>
+                <span class="pill">store listing</span>
+                <span class="pill">release names</span>
+              </div>
+            </article>
+            <article class="card span-6">
+              <h2>Clean Outputs</h2>
+              <p>Generated folders are ignored so the repo remains portable and reviewable.</p>
+              <div class="pill-list">
+                <span class="pill">node_modules/</span>
+                <span class="pill">dist/</span>
+                <span class="pill">release/</span>
+                <span class="pill">chrome-extension/app/</span>
+                <span class="pill">Gradle build folders</span>
+              </div>
+            </article>
+            <article class="card span-12">
+              <h3>Release Checklist</h3>
+              <div class="checklist">
+                <label class="check"><input type="checkbox" /> <span>Update version and copyright-visible metadata.</span></label>
+                <label class="check"><input type="checkbox" /> <span>Run `npm run build` and test the browser app.</span></label>
+                <label class="check"><input type="checkbox" /> <span>Run `npm run package:chrome` and test the unpacked extension.</span></label>
+                <label class="check"><input type="checkbox" /> <span>Package Electron only when desktop release artifacts are needed.</span></label>
+                <label class="check"><input type="checkbox" /> <span>Sync Capacitor only when mobile builds are being prepared.</span></label>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel" id="recovery">
+          <div class="grid">
+            <article class="card span-8">
+              <h2>Recovery Reality</h2>
+              <p>
+                The local Git repository was repaired after `.git` and the original editable source were lost. The current app source is functional but reconstructed from bundled production output.
+              </p>
+              <p>
+                If a remote GitHub repository still contains cleaner original source history, inspect it before force-pushing this recovered branch.
+              </p>
+            </article>
+            <article class="card span-4 command">
+              <h3>Safer Force Push</h3>
+              <pre><code>git push --force-with-lease origin main</code></pre>
+              <button data-copy="git push --force-with-lease origin main">Copy Command</button>
+            </article>
+            <article class="card span-12">
+              <h3>Guiding Rule</h3>
+              <p>
+                Preserve history when it contains information that cannot be regenerated. Generated installers can be rebuilt. Hand-written source and release notes deserve extra care.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        QR Studio repository guide. Developer: Shu-Yen Wan. Version 1.1.2.
+      </footer>
+    </div>
+
+    <script>
+      const tabs = Array.from(document.querySelectorAll('.tab'));
+      const panels = Array.from(document.querySelectorAll('.panel'));
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          const id = tab.dataset.panel;
+          tabs.forEach((item) => item.setAttribute('aria-selected', String(item === tab)));
+          panels.forEach((panel) => panel.classList.toggle('active', panel.id === id));
+        });
+      });
+
+      document.querySelectorAll('[data-copy]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          const original = button.textContent;
+          try {
+            await navigator.clipboard.writeText(button.dataset.copy);
+            button.textContent = 'Copied';
+          } catch {
+            button.textContent = 'Copy manually';
+          }
+          window.setTimeout(() => {
+            button.textContent = original;
+          }, 1200);
+        });
+      });
+    </script>
+  </body>
+</html>
